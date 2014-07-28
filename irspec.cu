@@ -199,7 +199,7 @@ int main(int argc, char* argv[])
   ndata=(int)(ndata/nThrds)+1;
   ndata=nThrds*2*(int)(ndata/2);
  
-  printf("%d %d\n",ndata,nThrds);
+  printf("FFT arrays size: %d, Number of cuda threads: %d\n",ndata,nThrds);
  
   nw1=0;
   test=1;
@@ -252,8 +252,6 @@ int main(int argc, char* argv[])
     }
     
   }
-
-  printf("%d %d %d %d %d %d\n",iFirst,iLast,jFirst,jLast,nw1,nw3);
   
   res=(float**)malloc(nw1*sizeof(float*));
   
@@ -297,8 +295,6 @@ int main(int argc, char* argv[])
     fscanf(input,"%f",&tau1);
     fscanf(input,"%f",&tau2);
     fscanf(input,"%f",&tau3);
-    
-    printf("%f %f %f %f %f %f %f\n",wm,c1,c2,c3,tau1,tau2,tau3);
 
     param[0]=c1*tau1;
     param[1]=c2*tau2;
