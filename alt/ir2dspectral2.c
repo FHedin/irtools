@@ -8,7 +8,7 @@
 #define PI 3.14159265358979323846
 
 double c1,tau1,c2,tau2,c3,tau3,w,wm,delta,tLife,alpha;
-double cmtops=2*PI*clight*1.e-10;
+const double cmtops=2*PI*clight*1.e-10;
 
 double g(double t);
 double complex Rr(double t1 ,double t2, double t3);
@@ -25,6 +25,10 @@ int main(int argc, char* argv[])
   fftw_complex *rlist,*ftrlist,*rnlist,*ftrnlist;
   fftw_plan pr,prn;
   
+  fscanf(input,"%lf %lf %lf %lf",&w1min,&w1max,&w3min,&w3max);
+  fscanf(input,"%lf %lf %lf",&delta,&tLife,&alpha);
+  fscanf(input,"%d %lf",&ndata,&dt);
+  fscanf(input,"%lf",&t2);
   fscanf(input,"%lf",&w);
   fscanf(input,"%lf",&c1);
   fscanf(input,"%lf",&c2);
@@ -32,18 +36,11 @@ int main(int argc, char* argv[])
   fscanf(input,"%lf",&tau1);
   fscanf(input,"%lf",&tau2);
   fscanf(input,"%lf",&tau3);
-  fscanf(input,"%lf",&delta);
-  fscanf(input,"%lf",&wm);
-  fscanf(input,"%d",&ndata);
-  fscanf(input,"%lf",&dt);
-  fscanf(input,"%lf %lf %lf %lf",&w1min,&w1max,&w3min,&w3max);
-  fscanf(input,"%lf %lf",&tLife,&alpha);
-  fscanf(input,"%lf",&t2);
   
-  rlist=(fftw_complex*) fftw_malloc(ndata*ndata*sizeof(*rlist));
-  ftrlist=(fftw_complex*) fftw_malloc(ndata*ndata*sizeof(*ftrlist));
-  rnlist=(fftw_complex*) fftw_malloc(ndata*ndata*sizeof(*rnlist));
-  ftrnlist=(fftw_complex*) fftw_malloc(ndata*ndata*sizeof(*ftrnlist));
+  rlist    = (fftw_complex*) fftw_malloc(ndata*ndata*sizeof(*rlist));
+  ftrlist  = (fftw_complex*) fftw_malloc(ndata*ndata*sizeof(*ftrlist));
+  rnlist   = (fftw_complex*) fftw_malloc(ndata*ndata*sizeof(*rnlist));
+  ftrnlist = (fftw_complex*) fftw_malloc(ndata*ndata*sizeof(*ftrnlist));
   
   pr=fftw_plan_dft_2d(ndata, ndata, rlist,ftrlist , FFTW_BACKWARD, FFTW_ESTIMATE);
   prn=fftw_plan_dft_2d(ndata, ndata, rnlist,ftrnlist , FFTW_BACKWARD, FFTW_ESTIMATE);

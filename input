@@ -1,0 +1,13 @@
+1000.0 1100.0 1000.0 1100.0   # desired range for the output matrix
+18.0 1.2 0.5          # spectral shift, T1, factor to estimate T2 from T1
+7000 0.015            # number of points in FFT arrays, time resolution.
+0.25                  # t2 value that will be changed by spectra.
+1                     # number of structures defined below
+1044.23               # wm : average frequency: (1/N)sum^N_i=1 nu_i
+0.0                   # w : ???
+1.75489               # a ; f(x)=a*exp(-x/t1)+b*exp(-x/t2)+c*exp(-x/t3)
+0.96598               # b
+1.06525               # c
+0.0347396             # t1
+0.313871              # t2
+5.54923               # t3
