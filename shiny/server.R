@@ -4,7 +4,8 @@ shinyServer(function(input, output) {
   
   output$plot2dir <- renderPlot({
     
-    inp = read.table("/home/hedin/progra/irtools/spectrum.cpu")
+    file = gzfile("test_spectrum.dat.gz")
+    inp = read.table(file)
     
     mat = matrix(inp$V3,nrow=sqrt(length(inp$V1)),ncol=sqrt(length(inp$V2)),byrow=FALSE) 
     
