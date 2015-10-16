@@ -1,7 +1,16 @@
-#include <stdio.h>
+/*
+ * Copyright (c) 2013-2015, Florent Hédin, Pierre-André Cazade, Markus Meuwly, 
+ * and the University of Basel, Switzerland. All rights reserved.
+ * 
+ * The 3-clause BSD license is applied to this software.
+ * 
+ * See LICENSE.txt
+ */
+
+#ifdef USE_CUDA
+
 #include <stdlib.h>
-#include <math.h>
-#include <string.h>
+#include <stdio.h>
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -12,9 +21,8 @@
 #define nThrdsY 16
 #define nThrds 256
 
-#define clight 299792458.0
-#define M_PI   3.14159265358979323846
-#define cmtops (2.0*M_PI*clight*1.e-10)
+#include "globals.h"
+#include "ir2dcuda.h"
 
 __device__ __forceinline__ cuComplex my_cexpc (cuComplex z)
 {
@@ -175,54 +183,16 @@ __global__ void kernelNonRephasing(cufftComplex* d_r, float dt, float t2,int n,f
 }
 
 //takes an input string and replaces # with \0 so that comments are ignored when parsing
-void removeComments(char buffer[])
+static void removeComments(char buffer[])
 {
     char* sharp=strchr(buffer,'#');
     *sharp = '\0';
 }
 
-int main(int argc, char* argv[])
+int ir2d_cuda(FILE* input, FILE* output)
 {
-
-    if (argc != 5)
-    {
-        fprintf(stderr,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    char *inpName,*outName;
-
-    // arguments parsing
-    for (int i=1; i<argc; i++)
-    {
-        // get name of input file
-        if (!strcmp(argv[i],"-i"))
-        {
-            inpName = argv[++i];
-        }
-        // get user specified seed, 128 characters max, keep it as a string for the moment
-        else if (!strcmp(argv[i],"-o"))
-        {
-            outName = argv[++i];
-        }
-        // print help and proper exit
-        else if ( !strcmp(argv[i],"-h") || !strcmp(argv[i],"--h")|| !strcmp(argv[i],"-help") || !strcmp(argv[i],"--help") )
-        {
-            fprintf(stdout,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
-            return EXIT_SUCCESS;
-        }
-        // error if unknown command line option
-        else
-        {
-            fprintf(stderr,"[Error] Argument '%s' is unknown.\n",argv[i]);
-            fprintf(stderr,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
-            return EXIT_FAILURE;
-        }
-    }
-
-    FILE* input=fopen(inpName,"rt");
-    FILE* out=fopen(outName,"wt");
-
+    fprintf(stdout,"Running on GPU\n");
+    
     int i,ii,j,l,test;
     int iw1,iw3,iFirst,iLast,jFirst,jLast;
     int ndata,nw1,nw3,nave;
@@ -473,11 +443,11 @@ int main(int argc, char* argv[])
 
             w3=1.e10/((float)ndata*clight*dt)*(float)(1-ndata/2+j);
 
-            fprintf(out,"%f\t%f\t%e\n",w1,w3,res[iw1][iw3]/(float)ndata);
+            fprintf(output,"%f\t%f\t%e\n",w1,w3,res[iw1][iw3]/(float)ndata);
             iw3++;
         }
 
-        fprintf(out,"\n");
+        fprintf(output,"\n");
         iw1++;
     }
 
@@ -486,9 +456,8 @@ int main(int argc, char* argv[])
 
     free(res);
 
-    fclose(out);
-    fclose(input);
-
     return 0;
 
 }
+
+#endif // USE_CUDA

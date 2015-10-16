@@ -1,12 +1,16 @@
+
+CC=gcc
+CUCC=nvcc
+
+TARGET=ir2d
+MKDIR=mkdir -p ./obj
+
 all:
-	make cpu
-	make gpu
-
-cpu:
-	gcc -O3 -march=native -ffast-math -std=c99 src/ir2dspectra.c -o ir2d -lm -lfftw3
-
-gpu:
-	nvcc -O3 --use_fast_math cuda/irspec.cu -o ir2d_cuda -lcufft
+	@$(MKDIR)
+	gcc  -O2 -std=c99 -I. -c src/ir2d.c        -o obj/ir2d.o
+	nvcc -O2 -D USE_CUDA -I. -c src/ir2dcuda.cu    -o obj/ir2dcuda.o
+	gcc  -O2 -std=c99 -D USE_CUDA -I. -c src/main.c -o obj/main.o
+	nvcc -O2 obj/*.o -o $(TARGET) -lfftw3 -lcufft -lm
 
 clean:
-	rm -f ir2d ir2d_cuda
+	rm -f $(TARGET) obj/*.o

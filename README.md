@@ -1,20 +1,45 @@
-irtools
-=======
+# IR tools : tools for 1 Dimension and 2 Dimensions Infra Red (IR & 2DIR) spectroscopy modelling
+------------------------------------------------------------------------------------------------
 
-Some tools for IR and 2DIR spectroscopy modelling.
+This repository provides source code and analysis code for producing 2DIR spectra, 
+following the approach detailed by Peter Hamm et al in their book : "Concepts and Methods of 2D Infrared Spectroscopy" ISBN: 9781107000056
 
-ir2dspectral2.c is highly recommended as it contains all the features to obtain a realistic 2D IR plot,
-including the lifetime broadening for the 0->1 and 1->2 transitions.
+Written in C99 and CUDA : you need the CUDA toolkit (https://developer.nvidia.com/cuda-toolkit)
+for compiling a version using CUDA capable GPUs.
 
-The lifetime broadening is not provided by ir2dspectra.c. ir2dspectral.c only provides it for the 0->1 transition.
+CUDA build is **optional** (see below).
 
-ir2dspectral_many.c works like ir2dspectral2.c but averages the response functions over many molecules.
-irspec.cu is the single precision GPU version of ir2dspectral_many.c
+## How to compile
+-----------------
 
-Please not that all the previous code requires the frequency fluctuations correlation function (FFCF) to be modelled
-by a tri-exponential:
-g(t)=c_1*exp(-t/tau_1)+c_2*exp(-t/tau_1t2)+c_3*exp(-t/tau_3)
+* Dependency : 
+  * FFTW Version >= 3 : http://www.fftw.org/ : Tested 3.3.4 on 16 Oct 2015 on Fedora linux 21 x86_64
+  * If a CUDA version is wanted :
+    * CUDA TOOLKIT : Tested version 7 on 16 Oct 2015 on Fedora linux 21 x86_64
 
-ir2dspectra_num.c is supposed to avoid any assumption in the functional form of the FFCF by using numerical integration.
-So far, the integration scheme used is too trivial to provide any acceptable result. It will be updated soon with a more
-accurate integration scheme. Nevertheless, this approach requires a highly converged FFCF.
+## How to build
+---------------
+
+* Use the provided makefile : 
+  * run the command **make** if you want a version **WITHOUT CUDA capabilities**
+  * run the command **make CUDA=ON** if you want a version **WITH CUDA capabilities**
+
+
+## How to run 
+-------------
+Once compiled you should get the executable **ir2d**
+
+Use **ir2d -h** for more instructions
+
+You will find 2 input files for both CPU or GPU versions : everything after a ** \# ** is considered as comments
+
+## Licensing and Copyright
+--------------------------
+
+Copyright (c) 2013-2015, Florent Hédin, Pierre-André Cazade, Markus Meuwly, 
+and the University of Basel, Switzerland. All rights reserved.
+
+The 3-clause BSD license is applied to this software.
+
+See LICENSE.txt
+

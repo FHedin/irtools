@@ -1,70 +1,34 @@
-#include <stdio.h>
+/*
+ * Copyright (c) 2013-2015, Florent Hédin, Pierre-André Cazade, Markus Meuwly, 
+ * and the University of Basel, Switzerland. All rights reserved.
+ * 
+ * The 3-clause BSD license is applied to this software.
+ * 
+ * See LICENSE.txt
+ */
+
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include <complex.h>
 #include <string.h>
 
 #include <fftw3.h>
 
-#define clight 299792458.0
-#define M_PI   3.14159265358979323846
-#define cmtops (2.0*M_PI*clight*1.e-10)
+#include "globals.h"
 
-double c1,tau1,c2,tau2,c3,tau3,w,wm,delta,tLife,alpha;
+static double c1,tau1,c2,tau2,c3,tau3,w,wm,delta,tLife,alpha;
 
-double g(double t);
-double complex Rr(double t1 ,double t2, double t3);
-double complex Rnr(double t1 ,double t2, double t3);
+static inline void removeComments(char buffer[]);
+static double g(double t);
+static double complex Rr(double t1 ,double t2, double t3);
+static double complex Rnr(double t1 ,double t2, double t3);
 
-//takes an input string and replaces # with \0 so that comments are ignored when parsing
-void removeComments(char buffer[])
-{
-    char* sharp=strchr(buffer,'#');
-    *sharp = '\0';
-}
-
-int main(int argc, char* argv[])
+int ir2d(FILE* input, FILE* output)
 {
 
-    if (argc != 5)
-    {
-        fprintf(stderr,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    char *inpName,*outName;
-
-    // arguments parsing
-    for (int i=1; i<argc; i++)
-    {
-        // get name of input file
-        if (!strcmp(argv[i],"-i"))
-        {
-            inpName = argv[++i];
-        }
-        // get user specified seed, 128 characters max, keep it as a string for the moment
-        else if (!strcmp(argv[i],"-o"))
-        {
-            outName = argv[++i];
-        }
-        // print help and proper exit
-        else if ( !strcmp(argv[i],"-h") || !strcmp(argv[i],"--h")|| !strcmp(argv[i],"-help") || !strcmp(argv[i],"--help") )
-        {
-            fprintf(stdout,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
-            return EXIT_SUCCESS;
-        }
-        // error if unknown command line option
-        else
-        {
-            fprintf(stderr,"[Error] Argument '%s' is unknown.\n",argv[i]);
-            fprintf(stderr,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
-            return EXIT_FAILURE;
-        }
-    }
-
-    FILE* input=fopen(inpName,"rt");
-    FILE* out=fopen(outName,"wt");
-
+    fprintf(stdout,"Running on CPU\n");
+  
     int i,ii,j,k,kk,l,ll;
     int iw1,iw3;
     int ndata,nw1,nw3,nave;
@@ -342,12 +306,12 @@ int main(int argc, char* argv[])
 
                 if( w3>=w3min )
                 {
-                    fprintf(out,"%lf\t%lf\t%le\n",w1,w3,res[iw1][iw3]);
+                    fprintf(output,"%lf\t%lf\t%le\n",w1,w3,res[iw1][iw3]);
                     iw3++;
                 }
             }
 
-            fprintf(out,"\n");
+            fprintf(output,"\n");
             iw1++;
         }
     }
@@ -360,14 +324,18 @@ int main(int argc, char* argv[])
     fftw_free(rnlist);
     //fftw_free(ftrnlist);
 
-    fclose(out);
-    fclose(input);
-
     return EXIT_SUCCESS;
 
 }
 
-double g(double t)
+//takes an input string and replaces # with \0 so that comments are ignored when parsing
+static inline void removeComments(char buffer[])
+{
+    char* sharp=strchr(buffer,'#');
+    *sharp = '\0';
+}
+
+static double g(double t)
 {
 
     double a,b,f1,f2,f3;
@@ -383,7 +351,7 @@ double g(double t)
 
 }
 
-double complex Rr(double t1 ,double t2, double t3)
+static double complex Rr(double t1 ,double t2, double t3)
 {
     double complex f1;
     double f2;
@@ -395,7 +363,7 @@ double complex Rr(double t1 ,double t2, double t3)
     return ( f1 * f2 );
 }
 
-double complex Rnr(double t1 ,double t2, double t3)
+static double complex Rnr(double t1 ,double t2, double t3)
 {
     double complex f1;
     double f2;
