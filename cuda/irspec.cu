@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -11,9 +12,9 @@
 #define nThrdsY 16
 #define nThrds 256
 
-#define clight 299792458
-#define PI 3.14159265358979323846
-#define cmtops (2*PI*clight*1.e-10)
+#define clight 299792458.0
+#define M_PI   3.14159265358979323846
+#define cmtops (2.0*M_PI*clight*1.e-10)
 
 __device__ __forceinline__ cuComplex my_cexpc (cuComplex z)
 {
@@ -183,8 +184,44 @@ void removeComments(char buffer[])
 int main(int argc, char* argv[])
 {
 
-    FILE* input=fopen(argv[1],"r");
-    FILE* out=fopen("spec.dat","w");
+    if (argc != 5)
+    {
+        fprintf(stderr,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *inpName,*outName;
+
+    // arguments parsing
+    for (int i=1; i<argc; i++)
+    {
+        // get name of input file
+        if (!strcmp(argv[i],"-i"))
+        {
+            inpName = argv[++i];
+        }
+        // get user specified seed, 128 characters max, keep it as a string for the moment
+        else if (!strcmp(argv[i],"-o"))
+        {
+            outName = argv[++i];
+        }
+        // print help and proper exit
+        else if ( !strcmp(argv[i],"-h") || !strcmp(argv[i],"--h")|| !strcmp(argv[i],"-help") || !strcmp(argv[i],"--help") )
+        {
+            fprintf(stdout,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
+            return EXIT_SUCCESS;
+        }
+        // error if unknown command line option
+        else
+        {
+            fprintf(stderr,"[Error] Argument '%s' is unknown.\n",argv[i]);
+            fprintf(stderr,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    FILE* input=fopen(inpName,"rt");
+    FILE* out=fopen(outName,"wt");
 
     int i,ii,j,l,test;
     int iw1,iw3,iFirst,iLast,jFirst,jLast;

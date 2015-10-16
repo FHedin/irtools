@@ -3,13 +3,14 @@
 #include <math.h>
 #include <complex.h>
 #include <string.h>
+
 #include <fftw3.h>
 
-#define clight 299792458
-#define PI 3.14159265358979323846
+#define clight 299792458.0
+#define M_PI   3.14159265358979323846
+#define cmtops (2.0*M_PI*clight*1.e-10)
 
 double c1,tau1,c2,tau2,c3,tau3,w,wm,delta,tLife,alpha;
-const double cmtops=2*PI*clight*1.e-10;
 
 double g(double t);
 double complex Rr(double t1 ,double t2, double t3);
@@ -25,8 +26,44 @@ void removeComments(char buffer[])
 int main(int argc, char* argv[])
 {
 
-    FILE* input=fopen(argv[1],"rt");
-    FILE* out=fopen("spec.dat","wt");
+    if (argc != 5)
+    {
+        fprintf(stderr,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *inpName,*outName;
+
+    // arguments parsing
+    for (int i=1; i<argc; i++)
+    {
+        // get name of input file
+        if (!strcmp(argv[i],"-i"))
+        {
+            inpName = argv[++i];
+        }
+        // get user specified seed, 128 characters max, keep it as a string for the moment
+        else if (!strcmp(argv[i],"-o"))
+        {
+            outName = argv[++i];
+        }
+        // print help and proper exit
+        else if ( !strcmp(argv[i],"-h") || !strcmp(argv[i],"--h")|| !strcmp(argv[i],"-help") || !strcmp(argv[i],"--help") )
+        {
+            fprintf(stdout,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
+            return EXIT_SUCCESS;
+        }
+        // error if unknown command line option
+        else
+        {
+            fprintf(stderr,"[Error] Argument '%s' is unknown.\n",argv[i]);
+            fprintf(stderr,"Usage : %s -i inputFile -o outputFile \n",argv[0]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    FILE* input=fopen(inpName,"rt");
+    FILE* out=fopen(outName,"wt");
 
     int i,ii,j,k,kk,l,ll;
     int iw1,iw3;
@@ -326,7 +363,7 @@ int main(int argc, char* argv[])
     fclose(out);
     fclose(input);
 
-    return 0;
+    return EXIT_SUCCESS;
 
 }
 
