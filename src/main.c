@@ -1,11 +1,11 @@
 /*
-Copyright (c) 2013-2015, Florent Hédin, Pierre-André Cazade, Markus Meuwly, 
-and the University of Basel, Switzerland. All rights reserved.
-
-The 3-clause BSD license is applied to this software.
-
-See LICENSE.txt
-*/
+ * Copyright (c) 2013-2015, Florent Hédin, Pierre-André Cazade, Markus Meuwly, 
+ * and the University of Basel, Switzerland. All rights reserved.
+ * 
+ * The 3-clause BSD license is applied to this software.
+ * 
+ * See LICENSE.txt
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,9 +26,9 @@ See LICENSE.txt
 void help(FILE* STREAM, char* argv[])
 {
 #ifdef USE_CUDA
-    fprintf(STREAM,"Usage : %s -i inputFile -o outputFile\n",argv[0]);
-    fprintf(STREAM,"\tFor a standard cpu use\n\n");
-    fprintf(STREAM,"For using a cuda gpu add -cuda (or --cuda or -gpu or --gpu) :\n");
+    fprintf(STREAM,"For a standard cpu use :\n");
+    fprintf(STREAM,"Usage : %s -i inputFile -o outputFile\n\n",argv[0]);
+    fprintf(STREAM,"For using a cuda gpu, add -cuda (or --cuda or -gpu or --gpu) :\n");
     fprintf(STREAM,"Usage : %s -i inputFile -o outputFile -cuda\n",argv[0]);
 #else
     fprintf(STREAM,"Usage : %s -i inputFile -o outputFile\n",argv[0]);
@@ -100,9 +100,11 @@ int main(int argc, char* argv[])
     }
 
     int status = EXIT_SUCCESS;
+#ifdef USE_CUDA
     if (useCuda)
         status = ir2d_cuda(input,output);
     else
+#endif
         status = ir2d(input,output);
 
     if(status != EXIT_SUCCESS)

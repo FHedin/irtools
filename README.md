@@ -7,7 +7,7 @@ following the approach detailed by Peter Hamm et al in their book : "Concepts an
 Written in C99 and CUDA : you need the CUDA toolkit (https://developer.nvidia.com/cuda-toolkit)
 for compiling a version using CUDA capable GPUs.
 
-CUDA build is **optional** (see below).
+CUDA build is **optional** and **disabled** by default (see below).
 
 ## How to compile
 -----------------
@@ -23,7 +23,6 @@ CUDA build is **optional** (see below).
 * Use the provided makefile : 
   * run the command **make** if you want a version **WITHOUT CUDA capabilities**
   * run the command **make CUDA=ON** if you want a version **WITH CUDA capabilities**
-
 
 ## How to run 
 -------------
