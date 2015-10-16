@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+*.kdev*
+*.png
+/data
+/obj
+/ir2d
+spectr*
+
